@@ -44,11 +44,29 @@ def main():
         #api_url = "https://2c52-64-79-113-53.ngrok-free.app/devices/"+actual_device_id/result"
         
         data = fetch_api_data(api_url)
+       # if data:
+       #     st.subheader("JSON Result Data")
+       #     st.json(data)  # Display JSON in a pretty format
+       # else:
+       #     st.error("Failed to retrieve data.")
+
         if data:
-            st.subheader("JSON Result Data")
-            st.json(data)  # Display JSON in a pretty format
+            st.subheader("API Response Details")
+            st.write("Timestamp:", data.get("timestamp"))
+            st.write("Device ID:", data.get("deviceId"))
+            st.write("Model ID:", data.get("modelId"))
+
+            detected_objects = data.get("detectedObjects", [])
+            if detected_objects:
+                # Convert the list of detected objects into a Pandas DataFrame.
+                df = pd.DataFrame(detected_objects)
+                st.subheader("Detected Objects")
+                st.table(df)
+            else:
+                st.write("No detected objects found.")
         else:
-            st.error("Failed to retrieve data.")
+            st.error("No data retrieved from the API.")
+
 
 if __name__ == "__main__":
     main()
