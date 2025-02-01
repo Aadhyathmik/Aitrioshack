@@ -17,6 +17,9 @@ device_mapping = {
         "11070_f27": "Aid-80070001-0000-2000-9002-000000000f27"
     }
 
+display_options = {f"{display} ({device_id})": device_id for display, device_id in device_mapping.items()}
+
+
 def fetch_api_data(api_url):
     """
     Fetch JSON data from the given API URL.
@@ -33,7 +36,9 @@ def main():
     st.title("Device Data Viewer")
 
     # Create a select box using the keys from the device_mapping dictionary.
-    selected_display = st.selectbox("Select Device:", list(device_mapping.keys()))
+    #selected_display = st.selectbox("Select Device:", list(device_mapping.keys()))
+    selected_display = st.selectbox("Select Device:", list(display_options.keys()))
+
 
     # When the "Fetch Data" button is clicked, use the corresponding device ID
     if st.button("Fetch Data"):
@@ -52,6 +57,8 @@ def main():
        # else:
        #     st.error("Failed to retrieve data.")
 
+
+
         if data:
             st.subheader("API Response Details")
             st.write("Timestamp:", data.get("timestamp"))
@@ -59,15 +66,37 @@ def main():
             st.write("Model ID:", data.get("modelId"))
 
             detected_objects = data.get("detectedObjects", [])
+
             if detected_objects:
                 # Convert the list of detected objects into a Pandas DataFrame.
                 df = pd.DataFrame(detected_objects)
+                
+                # Define a function that highlights a row in green if the score is above 0.9.
+                def highlight_score(row):
+                    if row['score'] > 0.9:
+                        return ['background-color: green'] * len(row)
+                    else:
+                        return [''] * len(row)
+                
+                # Apply the styling to the DataFrame.
+                styled_df = df.style.apply(highlight_score, axis=1)
+                
                 st.subheader("Detected Objects")
-                st.table(df)
+                # Display the styled DataFrame.
+                st.dataframe(styled_df)
             else:
-                st.write("No detected objects found.")
+                # Display a funky message when no objects are detected.
+                st.markdown(
+                    """
+                    ### Uh-oh! No objects detected...
+                    
+                    It seems like nothing is in view! Try **adjusting the camera** or **bringing the right object** into view. 
+                    Give it another go!
+                    """, unsafe_allow_html=True
+                )
+
         else:
-            st.error("No data retrieved from the API.")
+            st.error("Oh snap! The API seems to be on a break and didn't return any data. Give it another shot again!")
 
 
 if __name__ == "__main__":
