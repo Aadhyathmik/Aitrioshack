@@ -1,5 +1,7 @@
 import requests
 import streamlit as st
+import pandas as pd
+
 
 device_mapping = {
         "11041_f0a": "Aid-80070001-0000-2000-9002-000000000f0a",
