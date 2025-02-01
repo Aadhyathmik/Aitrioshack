@@ -17,8 +17,6 @@ device_mapping = {
         "11070_f27": "Aid-80070001-0000-2000-9002-000000000f27"
     }
 
-display_options = {f"{display} ({device_id})": device_id for display, device_id in device_mapping.items()}
-
 
 def fetch_api_data(api_url):
     """
@@ -36,8 +34,8 @@ def main():
     st.title("Device Data Viewer")
 
     # Create a select box using the keys from the device_mapping dictionary.
-    #selected_display = st.selectbox("Select Device:", list(device_mapping.keys()))
-    selected_display = st.selectbox("Select Device:", list(display_options.keys()))
+    selected_display = st.selectbox("Select Device:", list(device_mapping.keys()))
+    # selected_display = st.selectbox("Select Device:", list(display_options.keys()))
 
 
     # When the "Fetch Data" button is clicked, use the corresponding device ID
